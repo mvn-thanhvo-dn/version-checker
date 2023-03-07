@@ -1,0 +1,33 @@
+name: Auto Update Version Checker
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # For NodeJS lib
+      - name: Check Node Packages
+        run: |
+          chmod +x ./scripts2/node.sh
+          ./scripts2/node.sh
+      # End For NodeJS lib
+
+      # For Laravel
+      - name: Install Composer
+        uses: docker://composer:2.1
+        with:
+          args: install --no-dev --no-interaction
+      
+      - name: Check Laravel Packages
+        run: |
+          chmod +x ./scripts2/laravel.sh
+          ./scripts2/laravel.sh
+      # End For Laravel
