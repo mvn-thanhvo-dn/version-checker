@@ -21,7 +21,7 @@ jobs:
 
       - name: Check Packages
         run: |
-          for package in $(jq -r '.dependencies | keys | .[]' package.json); do
+          for package in $(jq -r '.dependencies | .devDependencies | keys | .[]' package.json); do
             latest_version=$(npm view $package version)
             installed_version=$(jq -r ".dependencies.$package" package.json | cut -c 2-)
             if [[ $installed_version != $latest_version ]]; then
