@@ -1,9 +1,9 @@
-name: Package Check
+name: Version Package Check
 
 on:
   push:
     branches:
-      - main
+      - "**"
 
 jobs:
   check:
@@ -13,18 +13,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check Packages
+      - name: Init function
         run: |
-          jq -r '.dependencies | keys | .[]' package.json
-          jq -r '.devDependencies | keys | .[]' package.json
-          for package in $(jq -r '.dependencies | .devDependencies | keys | .[]' package.json); do
-            latest_version=$(npm view $package version)
-            installed_version=$(jq -r ".dependencies.$package" package.json | cut -c 2-)
-            if [[ $installed_version != $latest_version ]]; then
-              echo "Error: $package is not in the latest version"
-              exit 1
-            fi
-          done
+          chmod +x ./scripts/version-compare.sh
+
+      # For NodeJS lib
+      - name: Check Node Packages
+        run: |
+          chmod +x ./scripts/node-package-checker.sh
+          ./scripts/node-package-checker.sh
+      # End For NodeJS lib
+
+      # For Laravel
+      - name: Install Composer
+        uses: docker://composer:2.1
+        with:
+          args: install --no-dev --no-interaction
+      
+      - name: Check Laravel Packages
+        run: |
+          chmod +x ./scripts/laravel-package-checker.sh
+          ./scripts/laravel-package-checker.sh
+      # End For Laravel
