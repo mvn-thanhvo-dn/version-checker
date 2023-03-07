@@ -17,7 +17,7 @@ jobs:
         run: npm ci
 
       - name: Install jq
-        run: apt install -y jq
+        run: sudo apt install -y jq
 
       - name: Check Packages
         run: |
