@@ -16,11 +16,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install jq
-        run: sudo apt install -y jq
-
       - name: Check Packages
         run: |
+          jq -r '.dependencies | keys | .[]' package.json
+          jq -r '.devDependencies | keys | .[]' package.json
           for package in $(jq -r '.dependencies | .devDependencies | keys | .[]' package.json); do
             latest_version=$(npm view $package version)
             installed_version=$(jq -r ".dependencies.$package" package.json | cut -c 2-)
