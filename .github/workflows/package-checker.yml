@@ -16,6 +16,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install jq
+        run: apt install -y jq
+
       - name: Check Packages
         run: |
           for package in $(jq -r '.dependencies | keys | .[]' package.json); do
